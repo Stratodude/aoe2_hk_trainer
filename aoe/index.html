@@ -1,0 +1,224 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<title>aoe2 - hotkeys training</title>
+<link rel="icon" type="image/png" href="img/00AoEII.ico">
+<link rel="stylesheet" href="css/animate.min.css"/>
+<link rel="stylesheet" href="css/circle.css"/>
+<style>
+body { 
+	background: url(img/00background.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  font-family: "Lucida", Courier, monospace !important;
+}
+.card {
+	box-shadow:0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12)
+}
+div.container4 {
+    height: 90vh;
+    width:90vw;
+    max-width: 800px;
+    background: #ffffffe0;
+    border-radius: 5px;
+    position: relative;
+    margin:auto;
+    margin-top: 5vh;
+    display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* The overlay effect - lays on top of the container and over the image */
+.overlay {
+  position: absolute;
+  bottom: 0;
+  color: #f1f1f1;
+  width: 100%;
+  height: 100%;
+  transition: .1s ease;
+  text-align: center;
+  display:none;
+}
+
+.button-1{
+text-align:center;
+text-decoration: none;
+font-size: 150%;
+color: #FFF;
+background: #0CADA7;
+padding: 20px 60px;
+display: inline-block;
+white-space: nowrap;
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+margin: 10px 0;
+-webkit-transition: all 0.2s ease-in-out;
+-ms-transition: all 0.2s ease-in-out;
+-moz-transition: all 0.2s ease-in-out;
+-o-transition: all 0.2s ease-in-out;
+transition: all 0.2s ease-in-out;
+}
+.button-1:hover {
+background: #0A948F;
+}
+</style>
+</head>
+<body>
+<div class="container4">
+
+	 <table style="width:100%;text-align: center;">
+	  <tr>
+	    <td>
+	    	<div class="card animate__animated animate__faster animate__zoomIn" style="width:270px; height: 270px;border: 1px solid #ccc;margin: auto;">
+			    <img src="img/webp/House.webp" alt="" style="padding: 7px;" id="image_r">
+			    <div class="overlay"><img src="img/nope.png" style="width:100%" id="img_result" class="animate__animated animate__faster animate__flipInX"></div>
+			</div>
+		</td>
+		<td>
+			<div style="width:240px;margin:auto;" class="c100 p100 big" id="cirlce_prct">
+                    <span id="timer">60sec</span>
+                    <div class="slice">
+                        <div class="bar"></div>
+                        <div class="fill"></div>
+                    </div>
+            </div>
+		</td>
+	  </tr>
+	  <tr>
+	    <td>
+	    	<div><p id="img_name" style='font-size: 30px;'>House</p></div>
+	    </td>
+	    <td>
+	    	<div><p style='font-size: 30px;' id="score_cnt">Score: 0</p></div>
+		</td>
+	  </tr>
+	  <tr>
+	    <td colspan="2" style="height:200px;"><div id="menu_tips"><img src="img/eco_menu.png" alt="" style="padding: 5px;"><img src="img/military_menu.png" alt="" style="padding: 5px;"></div></td>
+	  </tr>
+	  <tr>
+	    <td colspan="2"><a href="#" class="button-1" onclick="startgame();">Start the game</a></td>
+	  </tr>
+	</table>
+
+</div>
+
+</body>
+<script>
+var img_codee,img_path,err_count;
+var game_on = new Boolean("false");
+var score_count = 0;
+var img_str='';
+var ImageArray =[{"nom":"Archery range","path":"Archery_range.webp","code":"ZZ"},{"nom":"Barracks","path":"Barracks.webp","code":"ZA"},{"nom":"Blacksmith","path":"Blacksmith.webp","code":"AS"},{"nom":"Bombard tower","path":"Bombard_tower.webp","code":"ZG"},{"nom":"Castle","path":"Castle.webp","code":"ZC"},{"nom":"Dock","path":"Dock.webp","code":"AT"},{"nom":"Farm","path":"Farm.webp","code":"AQ"},{"nom":"Villager","path":"FEMALEVILLDE.webp","code":"HQ"},{"nom":"Gate","path":"Gate.webp","code":"ZW"},{"nom":"GuardTower","path":"GuardTower.webp","code":"ZF"},{"nom":"House","path":"House.webp","code":"AA"},{"nom":"Lumber camp","path":"Lumber_camp.webp","code":"AR"},{"nom":"Market","path":"Market.webp","code":"AD"},{"nom":"Mill","path":"Mill.webp","code":"AZ"},{"nom":"Mining camp","path":"Mining_camp.webp","code":"AE"},{"nom":"Monastery","path":"Monastery.webp","code":"AF"},{"nom":"Outpost","path":"Outpost.webp","code":"ZQ"},{"nom":"Palisade gate","path":"Palisade_gate.webp","code":"ZX"},{"nom":"Palisade wall","path":"Palisade_wall.webp","code":"ZS"},{"nom":"Siege workshop","path":"Siege_workshop.webp","code":"ZR"},{"nom":"Stable","path":"Stable.webp","code":"ZE"},{"nom":"Stone wall","path":"Stone_wall.webp","code":"ZD"},{"nom":"Towncenter","path":"Towncenter.webp","code":"AW"},{"nom":"University","path":"University.webp","code":"AG"},{"nom":"Wonder","path":"Wonder.webp","code":"AX"}];
+
+document.addEventListener('keydown', function(event) {
+	if(game_on){
+		image_string_builder(event.key);
+	};
+});
+
+function startgame(){
+	game_on = true;
+
+	getRandomImage();
+
+	score_count = 0;
+	
+	document.getElementById("score_cnt").innerHTML='Score: '+score_count;
+
+	var startTime = 60000+Date.now();
+
+	var interval = setInterval(function() {
+
+		var elapsedTime = Date.now() - startTime;
+		var circle = document.getElementById("cirlce_prct");
+		
+		if(elapsedTime<0){
+
+			removeClassByPrefix(circle,'p')
+		    circle.classList.add('p'+Math.abs(Math.floor(elapsedTime*100/60000)));
+		    document.getElementById("timer").innerHTML = (elapsedTime / 1000).toFixed(2);
+
+		}else{
+
+			removeClassByPrefix(circle,'p')
+		    circle.classList.add('p0');
+		    document.getElementById("timer").innerHTML = 'Stop';
+		    clearInterval(interval);
+		    game_on = false;
+		}
+	}, 10);
+
+}
+
+
+function image_string_builder(k){
+	if(img_str.length < 1){
+		img_str=k;
+	}else{
+		img_str=img_str + k;
+		test_a(img_str);
+		img_str='';
+	}
+}
+function test_a(i){
+	const element = document.querySelector('.overlay');
+	document.getElementById("image_r").classList.remove('animate__animate__zoomIn');
+	if(i.toUpperCase()===img_code){
+		score_count=score_count+1
+		document.getElementById("score_cnt").innerHTML='Score: '+score_count;
+
+		element.classList.add('animate__flipInX');
+		element.style.display = "block"; 
+		document.getElementById("img_result").src = "img/yep.png";
+		element.classList.remove('animate__flipInX');
+		setTimeout(function(){ element.style.display = "none";getRandomImage();},600);
+	}else{
+		element.classList.add('animate__flipInX');
+		element.style.display = "block"; 
+		document.getElementById("img_result").src = "img/nope.png";
+		element.classList.remove('animate__flipInX');
+		
+		err_count=err_count+1
+		img_str='';
+		if(err_count==1){
+			setTimeout(function(){ 
+				element.style.display = "none";
+				document.getElementById("img_name").style.display = "block"; 
+			},600);
+		}else if(err_count==2){
+			setTimeout(function(){ 
+				element.style.display = "none";
+				document.getElementById("menu_tips").style.display = "block"; 
+			},600);
+		}else{
+			setTimeout(function(){ element.style.display = "none";getRandomImage();},600);
+		}	
+	}
+}
+
+function getRandomImage() {
+	img_str='';
+	err_count=0;
+	document.getElementById("img_name").style.display = "none";
+	document.getElementById("menu_tips").style.display = "none";
+    img_rand = ImageArray[Math.floor(Math.random()*ImageArray.length)];
+
+    document.getElementById("image_r").classList.add('animate__animate__zoomIn');
+    document.getElementById("image_r").src = 'img/webp/' + img_rand.path;
+    document.getElementById("img_name").innerHTML=img_rand.nom
+    img_code = img_rand.code;
+}
+
+
+function removeClassByPrefix(el, prefix) {
+    var regx = new RegExp('\\b' + prefix + '.*?\\b', 'g');
+    el.className = el.className.replace(regx, '');
+    return el;
+}
+
+</script>
+</html> 
